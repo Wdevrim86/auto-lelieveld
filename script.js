@@ -12,6 +12,7 @@
   const heroCta = $("[data-hero-cta]");
   const mobileActions = $("[data-mobile-actions]");
   const formExtras = $("[data-form-extras]");
+  const copyRequestButton = $("[data-copy-request]");
 
   const closeMenu = () => {
     menu?.classList.remove("is-open");
@@ -101,13 +102,24 @@
   const serviceTitle = $("[data-service-title]");
   const serviceCopy = $("[data-service-copy]");
   const serviceAction = $("[data-service-action]");
+  const serviceImage = $("[data-service-image]");
 
   const activateService = (tab) => {
-    tabs.forEach((candidate) => candidate.setAttribute("aria-selected", String(candidate === tab)));
+    tabs.forEach((candidate) => {
+      const selected = candidate === tab;
+      candidate.setAttribute("aria-selected", String(selected));
+      candidate.tabIndex = selected ? 0 : -1;
+    });
+    serviceDetail?.setAttribute("aria-labelledby", tab.id);
     serviceDetail?.classList.add("is-changing");
     window.setTimeout(() => {
       if (serviceTitle) serviceTitle.textContent = tab.dataset.title || "";
       if (serviceCopy) serviceCopy.textContent = tab.dataset.copy || "";
+      if (serviceImage) {
+        serviceImage.src = tab.dataset.image || serviceImage.src;
+        serviceImage.alt = tab.dataset.imageAlt || "";
+        serviceImage.style.objectPosition = tab.dataset.imagePosition || "center";
+      }
       if (serviceAction) {
         serviceAction.childNodes[0].textContent = `${tab.dataset.action || "Afspraak aanvragen"} `;
         serviceAction.dataset.servicePrefill = tab.dataset.service || "";
@@ -162,24 +174,42 @@
     plateInput.value = formatPlate(plateInput.value);
   });
 
+  const fields = bookingForm ? $$("input, select, textarea", bookingForm) : [];
+  const errorMessages = {
+    name: "Vul uw naam in.",
+    phone: "Vul een telefoonnummer in waarop Dennis u kan bereiken.",
+    service: "Kies waarmee Dennis u kan helpen.",
+    email: "Controleer het e-mailadres, bijvoorbeeld naam@voorbeeld.nl."
+  };
+
+  const clearFieldError = (field) => {
+    field.removeAttribute("aria-invalid");
+    const error = $(`[data-error-for="${field.name}"]`, bookingForm);
+    if (error) error.textContent = "";
+  };
+
+  const validateForm = () => {
+    fields.forEach(clearFieldError);
+    const invalidFields = fields.filter((field) => !field.checkValidity());
+    invalidFields.forEach((field) => {
+      field.setAttribute("aria-invalid", "true");
+      const error = $(`[data-error-for="${field.name}"]`, bookingForm);
+      if (error) error.textContent = errorMessages[field.name] || "Controleer dit veld.";
+    });
+
+    if (!invalidFields.length) return true;
+    if (formExtras && invalidFields.some((field) => formExtras.contains(field))) formExtras.open = true;
+    if (formMessage) formMessage.textContent = "Controleer de gemarkeerde velden en probeer het opnieuw.";
+    invalidFields[0].focus();
+    return false;
+  };
+
   bookingForm?.addEventListener("input", (event) => {
-    event.target.removeAttribute("aria-invalid");
+    clearFieldError(event.target);
     if (formMessage) formMessage.textContent = "";
   });
 
-  bookingForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const fields = $$('input, select, textarea', bookingForm);
-    fields.forEach((field) => field.removeAttribute("aria-invalid"));
-    const invalid = fields.find((field) => !field.checkValidity());
-
-    if (invalid) {
-      invalid.setAttribute("aria-invalid", "true");
-      if (formMessage) formMessage.textContent = "Vul uw naam, telefoonnummer en gewenste dienst in.";
-      invalid.focus();
-      return;
-    }
-
+  const buildRequest = () => {
     const data = new FormData(bookingForm);
     const dateValue = String(data.get("date") || "");
     const readableDate = dateValue
@@ -203,9 +233,41 @@
       String(data.get("name"))
     ].filter((line) => line !== null).join("\n");
 
-    if (formMessage) formMessage.textContent = "Uw e-mailprogramma wordt geopend. Controleer de aanvraag en druk daar op verzenden.";
     const mailto = `mailto:info@autolelieveld.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return { subject, body, mailto };
+  };
+
+  bookingForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!validateForm()) return;
+    const { mailto } = buildRequest();
+    if (formMessage) formMessage.textContent = "Uw e-mailprogramma wordt geopend. Controleer de aanvraag en druk daar op verzenden.";
     window.setTimeout(() => { window.location.href = mailto; }, 120);
+  });
+
+  copyRequestButton?.addEventListener("click", async () => {
+    if (!validateForm()) return;
+    const { subject, body } = buildRequest();
+    const requestText = `${subject}\n\n${body}`;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(requestText);
+      } else {
+        const temporary = document.createElement("textarea");
+        temporary.value = requestText;
+        temporary.setAttribute("readonly", "");
+        temporary.style.position = "fixed";
+        temporary.style.opacity = "0";
+        document.body.appendChild(temporary);
+        temporary.select();
+        document.execCommand("copy");
+        temporary.remove();
+      }
+      if (formMessage) formMessage.textContent = "De aanvraagtekst is gekopieerd. Plak hem in uw eigen e-mail en stuur die naar info@autolelieveld.nl.";
+    } catch {
+      if (formMessage) formMessage.textContent = "Kopiëren lukt niet. Mail naar info@autolelieveld.nl of bel 0174 752 762.";
+    }
   });
 
   $("[data-year]").textContent = String(new Date().getFullYear());
