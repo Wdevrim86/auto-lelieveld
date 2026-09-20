@@ -43,6 +43,7 @@ button { color: inherit; }
 .shell { width: var(--shell); margin-inline: auto; }
 .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 .icon { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.icon-fill { fill: currentColor; stroke: none; }
 .skip-link { position: fixed; z-index: 999; top: 12px; left: 12px; transform: translateY(-160%); background: var(--white); color: var(--ink); padding: 12px 16px; font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
 
@@ -59,6 +60,8 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
 .utility-inner a { font-weight: 700; transition: color 180ms ease; }
 .utility-inner a:hover { color: var(--white); }
 .utility-mail { color: var(--white); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--red); }
+.utility-social { display: inline-flex; align-items: center; gap: 6px; color: #d8d9d7; }
+.utility-social .icon { width: 0.9rem; height: 0.9rem; }
 
 .site-header { position: sticky; top: 0; z-index: 35; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color 220ms ease, box-shadow 220ms ease; }
 .site-header.is-scrolled { border-color: var(--line-light); box-shadow: 0 12px 32px rgba(17, 18, 20, 0.08); }
@@ -97,6 +100,7 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
 .proof-rail > *:first-child { padding-left: 0; }
 .proof-rail > *:last-child { border-right: 0; }
 .proof-rail strong { font-family: var(--body); font-size: 1rem; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+.proof-rail strong .icon { width: 1rem; height: 1rem; margin-right: 5px; color: var(--red-bright); vertical-align: -0.14em; }
 .proof-rail span { margin-top: 8px; color: #b9bbbc; font-size: 0.75rem; }
 .proof-rail a:hover strong { color: var(--red-bright); }
 
@@ -125,7 +129,7 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
 .services-heading p { max-width: 48ch; color: #bfc0c1; }
 .services-stage { display: grid; grid-template-columns: minmax(270px, 0.34fr) minmax(0, 0.66fr); border-top: 1px solid var(--line-dark); }
 .service-index { border-right: 1px solid var(--line-dark); }
-.service-index button { width: 100%; min-height: 80px; border: 0; border-bottom: 1px solid var(--line-dark); padding: 0 28px 0 0; background: transparent; color: #939698; display: flex; align-items: center; text-align: left; font-family: var(--body); font-size: clamp(1rem, 1.3vw, 1.2rem); font-weight: 600; letter-spacing: -0.02em; cursor: pointer; transition: color 220ms ease, padding-left 260ms var(--ease-out), background 220ms ease; }
+.service-index button { width: 100%; min-height: 80px; border: 0; border-bottom: 1px solid var(--line-dark); padding: 0 28px 0 0; background: transparent; color: #939698; display: flex; align-items: center; text-align: left; font-family: var(--body); font-size: clamp(1rem, 1.3vw, 1.2rem); font-weight: 600; letter-spacing: -0.02em; cursor: pointer; transition: color 220ms ease, background 220ms ease; }
 .service-index button:hover { color: var(--white); }
 .service-index button[aria-selected="true"] { color: var(--white); padding-left: 18px; background: rgba(255,255,255,.055); box-shadow: inset 2px 0 0 var(--red); }
 .service-detail { position: relative; min-height: 520px; overflow: hidden; background: var(--ink-soft); }
@@ -155,12 +159,17 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
 .stars .icon { width: 18px; height: 18px; fill: currentColor; stroke-width: 1; }
 .review-score p { margin-top: 7px; font-size: 0.78rem; font-weight: 600; line-height: 1.45; }
 .review-copy h2 { max-width: 720px; font-size: clamp(2.15rem, 3.2vw, 3.15rem); }
-.review-copy a { display: inline-flex; align-items: center; gap: 11px; margin-top: 22px; font-size: 0.8rem; font-weight: 700; border-bottom: 1px solid var(--red); padding-bottom: 3px; }
+.review-links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 22px; }
+.review-copy a { display: inline-flex; align-items: center; gap: 9px; font-size: 0.8rem; font-weight: 700; border-bottom: 1px solid var(--red); padding-bottom: 3px; }
+.review-copy a:hover { color: var(--red-dark); }
 
 .booking { padding-bottom: clamp(96px, 10vw, 144px); background: var(--steel); }
 .booking-heading { display: flex; justify-content: space-between; align-items: end; gap: 60px; padding: clamp(82px, 9vw, 128px) 0 52px; }
 .booking-heading h2 { max-width: 760px; }
-.booking-heading p { max-width: 49ch; color: #424447; }
+.booking-intro { display: grid; justify-items: start; gap: 18px; max-width: 49ch; }
+.booking-heading p { color: #424447; }
+.booking-live-link { display: inline-flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--red); padding-bottom: 3px; font-size: 0.82rem; font-weight: 700; }
+.booking-live-link[hidden] { display: none; }
 .booking-grid { display: grid; grid-template-columns: minmax(0, 0.64fr) minmax(320px, 0.36fr); }
 .booking-form { padding: clamp(28px, 5vw, 58px); background: var(--ink); color: var(--white); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -189,6 +198,7 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
 .contact-block a:hover { color: var(--red); }
 .contact-block-primary a { color: var(--red); font-size: clamp(1.7rem, 2.5vw, 2.25rem); font-weight: 700; letter-spacing: -0.035em; }
 .contact-block .contact-small { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; font-family: var(--body); font-size: 0.76rem; font-weight: 700; border-bottom: 1px solid currentColor; }
+.contact-block .contact-small .icon { width: 1rem; height: 1rem; }
 
 .site-footer { padding: 82px 0 30px; background: var(--ink); color: var(--white); }
 .footer-main { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 90px; padding-bottom: 70px; }
@@ -308,6 +318,7 @@ h3 { font-family: var(--body); font-size: clamp(1.65rem, 2.5vw, 2.35rem); font-w
   .review-copy h2 { font-size: 2.05rem; }
   .booking-heading { padding: 62px 0 34px; }
   .booking-heading p { font-size: 0.92rem; }
+  .booking-intro { max-width: 58ch; }
   .booking-grid { width: 100%; }
   .booking-form, .contact-panel { padding: 34px 16px; }
   .form-row { grid-template-columns: 1fr; gap: 0; }

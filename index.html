@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="nl" data-booking-url="">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -46,6 +46,8 @@
       <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="1" /><path d="M7.5 3v5M16.5 3v5M3.5 10h17" /></symbol>
       <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></symbol>
       <symbol id="i-external" viewBox="0 0 24 24"><path d="M5 19 19 5M10 5h9v9" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 6.8" /></symbol>
+      <symbol id="i-facebook" viewBox="0 0 24 24"><path d="M13.8 20v-7h2.4l.4-2.8h-2.8V8.4c0-.8.2-1.4 1.4-1.4h1.5V4.5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.1H8.3V13h2.5v7h3Z" /></symbol>
     </svg>
 
     <a class="skip-link" href="#main">Ga naar de inhoud</a>
@@ -53,7 +55,7 @@
     <div class="utility-bar">
       <div class="shell utility-inner">
         <p><span data-open-status>Ma–vr 08:00–17:30</span><span class="utility-divider" aria-hidden="true"></span>Vlotlaan 322, Monster</p>
-        <div><a href="tel:+31174752762">0174 752 762</a><a class="utility-mail" href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a></div>
+        <div><a href="tel:+31174752762">0174 752 762</a><a class="utility-mail" href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a><a class="utility-social" href="https://www.facebook.com/Autolelieveld" target="_blank" rel="noopener" aria-label="Auto Lelieveld op Facebook">Facebook <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a></div>
       </div>
     </div>
 
@@ -64,6 +66,7 @@
         <nav id="main-nav" class="main-nav" aria-label="Hoofdnavigatie">
           <a href="#vakman">De werkplaats</a><a href="#diensten">Diensten</a><a href="#werkwijze">Werkwijze</a><a href="#contact">Contact</a>
           <a class="nav-mobile-contact" href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a>
+          <a class="nav-mobile-contact" href="https://www.facebook.com/Autolelieveld" target="_blank" rel="noopener">Facebook <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a>
         </nav>
         <a class="header-cta" href="#afspraak">Afspraak aanvragen <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
       </div>
@@ -86,8 +89,8 @@
         <div class="hero-proof" aria-label="Kernpunten Auto Lelieveld">
           <div class="shell proof-rail">
             <div><strong>Eigenaar én monteur</strong><span>U spreekt rechtstreeks met Dennis</span></div>
-            <div class="proof-contact"><strong>Eerst overleg</strong><span>Geen extra werk zonder afstemming</span></div>
-            <div class="proof-mobile-hide"><strong>Alle merken</strong><span>APK, onderhoud en reparatie</span></div>
+            <a class="proof-contact" href="https://www.rdw.nl/locatiewijzer" target="_blank" rel="noopener"><strong><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg> RDW erkend</strong><span>APK voor lichte voertuigen</span></a>
+            <div class="proof-mobile-hide"><strong>Alle merken</strong><span>Onderhoud en reparatie</span></div>
           </div>
         </div>
       </section>
@@ -148,12 +151,12 @@
       <section class="review-band" aria-labelledby="review-title">
         <div class="shell review-inner">
           <div class="review-score"><strong>4,9</strong><div><span class="stars" aria-hidden="true"><svg class="icon"><use href="#i-star"></use></svg><svg class="icon"><use href="#i-star"></use></svg><svg class="icon"><use href="#i-star"></use></svg><svg class="icon"><use href="#i-star"></use></svg><svg class="icon"><use href="#i-star"></use></svg></span><p>van 5 sterren<br />17 openbare beoordelingen</p></div></div>
-          <div class="review-copy"><h2 id="review-title">Goed werk merkt u aan de auto én aan de uitleg.</h2><a href="https://123auto.nl/consument/bedrijven-in-de-buurt/monster/olie-verversen" target="_blank" rel="noopener">Bekijk de openbare beoordelingen <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a></div>
+          <div class="review-copy"><h2 id="review-title">Goed werk merkt u aan de auto én aan de uitleg.</h2><div class="review-links"><a href="https://123auto.nl/consument/bedrijven-in-de-buurt/monster/olie-verversen" target="_blank" rel="noopener">Bekijk de openbare beoordelingen <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a><a href="https://www.facebook.com/Autolelieveld" target="_blank" rel="noopener"><svg class="icon icon-fill" aria-hidden="true"><use href="#i-facebook"></use></svg> Volg Auto Lelieveld op Facebook</a></div></div>
         </div>
       </section>
 
       <section class="booking" id="afspraak" aria-labelledby="booking-title">
-        <div class="shell booking-heading"><h2 id="booking-title">Vraag een afspraak aan.</h2><p>Na het invullen opent een voorbereide e-mail. Verstuur die zelf; Dennis neemt daarna persoonlijk contact op om het moment te bevestigen.</p></div>
+        <div class="shell booking-heading"><h2 id="booking-title">Vraag een afspraak aan.</h2><div class="booking-intro"><p>Kies uw voorkeur en vertel kort wat er speelt. Dennis bekijkt wat de klus vraagt en bevestigt daarna persoonlijk het juiste moment.</p><a class="booking-live-link" href="#" target="_blank" rel="noopener" hidden data-live-booking>Bekijk beschikbare momenten <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a></div></div>
         <div class="shell booking-grid">
           <form class="booking-form" id="booking-form" novalidate>
             <div class="form-row">
@@ -168,7 +171,10 @@
                   <label><span>E-mailadres (optioneel)</span><input name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="naam@voorbeeld.nl…" aria-describedby="email-error" /><small class="field-error" id="email-error" data-error-for="email"></small></label>
                   <label><span>Kenteken</span><input name="plate" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="8" placeholder="XX-123-X…" /></label>
                 </div>
-                <label><span>Voorkeursdatum</span><input name="date" type="date" /></label>
+                <div class="form-row">
+                  <label><span>Voorkeursdatum</span><input name="date" type="date" /></label>
+                  <label><span>Voorkeur dagdeel</span><select name="dayPart"><option value="Geen voorkeur">Geen voorkeur</option><option value="Ochtend (08:00–12:00)">Ochtend</option><option value="Middag (12:00–17:30)">Middag</option></select></label>
+                </div>
                 <label><span>Vertel kort wat er speelt</span><textarea name="details" rows="4" placeholder="Bijvoorbeeld: onderhoudsmelding, vreemd geluid of vraag over een occasion…"></textarea></label>
               </div>
             </details>
@@ -178,7 +184,7 @@
           </form>
           <aside class="contact-panel" id="contact" aria-label="Contactgegevens Auto Lelieveld">
             <div class="contact-block contact-block-primary"><span>Werkplaats</span><a href="tel:+31174752762">0174 752 762</a><a href="tel:+31650840498">06 508 40 498</a></div>
-            <div class="contact-block"><span>E-mail</span><a href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a></div>
+            <div class="contact-block"><span>Online</span><a href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a><a class="contact-small" href="https://www.facebook.com/Autolelieveld" target="_blank" rel="noopener"><svg class="icon icon-fill" aria-hidden="true"><use href="#i-facebook"></use></svg> Facebook</a></div>
             <div class="contact-block contact-secondary"><span>Adres</span><strong>Vlotlaan 322<br />2681 TV Monster</strong><a class="contact-small" href="https://www.google.com/maps/search/?api=1&amp;query=Vlotlaan+322+Monster" target="_blank" rel="noopener">Open de route <svg class="icon" aria-hidden="true"><use href="#i-external"></use></svg></a></div>
             <div class="contact-block contact-secondary"><span>Openingstijden</span><strong>Ma–vr 08:00–17:30<br />Za op afspraak</strong></div>
           </aside>
@@ -190,7 +196,7 @@
       <div class="shell footer-main">
         <div class="footer-brand-wrap"><a class="footer-brand" href="#top"><img src="assets/plates/header-logo.png" alt="Auto Lelieveld" width="2170" height="725" /></a><p>Persoonlijk contact. Duidelijk onderhoud.</p></div>
         <div class="footer-links">
-          <div><span>Contact</span><a href="tel:+31174752762">0174 752 762</a><a href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a></div>
+          <div><span>Contact</span><a href="tel:+31174752762">0174 752 762</a><a href="mailto:info@autolelieveld.nl">info@autolelieveld.nl</a><a href="https://www.facebook.com/Autolelieveld" target="_blank" rel="noopener">Facebook</a></div>
           <div><span>Werkplaats</span><a href="#diensten">Diensten</a><a href="#werkwijze">Werkwijze</a><a href="#afspraak">Afspraak</a></div>
           <div><span>Bezoek</span><p>Vlotlaan 322<br />2681 TV Monster</p><p>Ma–vr 08:00–17:30</p></div>
         </div>

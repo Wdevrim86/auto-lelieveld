@@ -13,6 +13,13 @@
   const mobileActions = $("[data-mobile-actions]");
   const formExtras = $("[data-form-extras]");
   const copyRequestButton = $("[data-copy-request]");
+  const liveBookingLink = $("[data-live-booking]");
+
+  const bookingUrl = document.documentElement.dataset.bookingUrl?.trim();
+  if (bookingUrl && liveBookingLink) {
+    liveBookingLink.href = bookingUrl;
+    liveBookingLink.hidden = false;
+  }
 
   const closeMenu = () => {
     menu?.classList.remove("is-open");
@@ -227,6 +234,7 @@
       data.get("plate") ? `Kenteken: ${data.get("plate")}` : null,
       `Werkzaamheden: ${data.get("service")}`,
       `Voorkeursdatum: ${readableDate}`,
+      `Voorkeur dagdeel: ${data.get("dayPart") || "Geen voorkeur"}`,
       data.get("details") ? `Toelichting: ${data.get("details")}` : null,
       "",
       "Met vriendelijke groet,",
