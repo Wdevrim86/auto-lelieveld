@@ -4,22 +4,18 @@
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
+  document.documentElement.classList.add("js-ready");
+
   const header = $("[data-header]");
   const menuButton = $(".menu-toggle");
   const menu = $("#main-nav");
+  const mobileActions = $("[data-mobile-actions]");
+  const heroCta = $("[data-hero-cta]");
   const bookingForm = $("#booking-form");
   const formMessage = $("[data-form-message]");
-  const heroCta = $("[data-hero-cta]");
-  const mobileActions = $("[data-mobile-actions]");
   const formExtras = $("[data-form-extras]");
   const copyRequestButton = $("[data-copy-request]");
   const liveBookingLink = $("[data-live-booking]");
-
-  const bookingUrl = document.documentElement.dataset.bookingUrl?.trim();
-  if (bookingUrl && liveBookingLink) {
-    liveBookingLink.href = bookingUrl;
-    liveBookingLink.hidden = false;
-  }
 
   const closeMenu = () => {
     menu?.classList.remove("is-open");
@@ -44,29 +40,41 @@
     if (window.innerWidth > 860) closeMenu();
   });
 
-  const updateHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 20);
+  const updateHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 16);
   updateHeader();
   window.addEventListener("scroll", updateHeader, { passive: true });
 
-  if (heroCta && mobileActions && "IntersectionObserver" in window) {
-    const heroCtaObserver = new IntersectionObserver(([entry]) => {
-      const isMobile = window.matchMedia("(max-width: 620px)").matches;
-      const hasPassedCta = !entry.isIntersecting && entry.boundingClientRect.bottom < 78;
-      mobileActions.classList.toggle("is-visible", isMobile && hasPassedCta);
-    }, { threshold: 0.1 });
-    heroCtaObserver.observe(heroCta);
+  const revealNodes = $$("[data-reveal]");
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -7%", threshold: 0.08 });
+    revealNodes.forEach((node) => revealObserver.observe(node));
+  } else {
+    revealNodes.forEach((node) => node.classList.add("is-visible"));
   }
 
-  let mobileFormState;
-  const syncFormExtras = () => {
-    if (!formExtras) return;
-    const isMobile = window.matchMedia("(max-width: 620px)").matches;
-    if (isMobile === mobileFormState) return;
-    formExtras.open = !isMobile;
-    mobileFormState = isMobile;
+  const setMobileActions = (visible) => {
+    if (!mobileActions) return;
+    const mobile = window.matchMedia("(max-width: 620px)").matches;
+    mobileActions.classList.toggle("is-visible", mobile && visible);
   };
-  syncFormExtras();
-  window.addEventListener("resize", syncFormExtras);
+
+  if (heroCta && mobileActions && "IntersectionObserver" in window) {
+    const actionObserver = new IntersectionObserver(([entry]) => {
+      const passed = !entry.isIntersecting && entry.boundingClientRect.bottom < 86;
+      setMobileActions(passed);
+    }, { threshold: 0.1 });
+    actionObserver.observe(heroCta);
+  } else {
+    const updateActions = () => setMobileActions(window.scrollY > 220);
+    updateActions();
+    window.addEventListener("scroll", updateActions, { passive: true });
+  }
 
   const amsterdamParts = () => Object.fromEntries(
     new Intl.DateTimeFormat("en-GB", {
@@ -87,75 +95,42 @@
     const { weekday, hour, minute } = amsterdamParts();
     const minutes = Number(hour) * 60 + Number(minute);
     const workday = ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(weekday);
-
-    if (workday && minutes >= 480 && minutes < 1050) {
-      node.textContent = "Nu open · tot 17:30";
-    } else if (workday && minutes < 480) {
-      node.textContent = "Vandaag open · 08:00–17:30";
-    } else if (weekday === "Sat") {
-      node.textContent = "Zaterdag · op afspraak";
-    } else {
-      node.textContent = "Nu gesloten · ma–vr 08:00–17:30";
-    }
+    if (workday && minutes >= 480 && minutes < 1050) node.textContent = "Nu open · tot 17:30";
+    else if (workday && minutes < 480) node.textContent = "Vandaag open · 08:00–17:30";
+    else if (weekday === "Sat") node.textContent = "Zaterdag · op afspraak";
+    else node.textContent = "Nu gesloten · ma–vr 08:00–17:30";
   };
-
-  const { year, month, day } = amsterdamParts();
-  const dateInput = bookingForm?.elements.date;
-  if (dateInput) dateInput.min = `${year}-${month}-${day}`;
   updateOpeningStatus();
 
-  const tabs = $$("[data-service-tab]");
-  const serviceDetail = $(".service-detail");
-  const serviceTitle = $("[data-service-title]");
-  const serviceCopy = $("[data-service-copy]");
-  const serviceAction = $("[data-service-action]");
-  const serviceImage = $("[data-service-image]");
+  $$('[data-year]').forEach((node) => { node.textContent = String(new Date().getFullYear()); });
 
-  const activateService = (tab) => {
-    tabs.forEach((candidate) => {
-      const selected = candidate === tab;
-      candidate.setAttribute("aria-selected", String(selected));
-      candidate.tabIndex = selected ? 0 : -1;
-    });
-    serviceDetail?.setAttribute("aria-labelledby", tab.id);
-    serviceDetail?.classList.add("is-changing");
-    window.setTimeout(() => {
-      if (serviceTitle) serviceTitle.textContent = tab.dataset.title || "";
-      if (serviceCopy) serviceCopy.textContent = tab.dataset.copy || "";
-      if (serviceImage) {
-        serviceImage.src = tab.dataset.image || serviceImage.src;
-        serviceImage.alt = tab.dataset.imageAlt || "";
-        serviceImage.style.objectPosition = tab.dataset.imagePosition || "center";
-      }
-      if (serviceAction) {
-        serviceAction.childNodes[0].textContent = `${tab.dataset.action || "Afspraak aanvragen"} `;
-        serviceAction.dataset.servicePrefill = tab.dataset.service || "";
-      }
-      serviceDetail?.classList.remove("is-changing");
-    }, 150);
+  if (!bookingForm) return;
+
+  const bookingUrl = document.documentElement.dataset.bookingUrl?.trim();
+  if (bookingUrl && liveBookingLink) {
+    liveBookingLink.href = bookingUrl;
+    liveBookingLink.hidden = false;
+  }
+
+  const { year, month, day } = amsterdamParts();
+  const dateInput = bookingForm.elements.date;
+  if (dateInput) dateInput.min = `${year}-${month}-${day}`;
+
+  const requestedService = new URLSearchParams(window.location.search).get("service");
+  if (requestedService && [...bookingForm.elements.service.options].some((option) => option.value === requestedService)) {
+    bookingForm.elements.service.value = requestedService;
+  }
+
+  let mobileFormState;
+  const syncFormExtras = () => {
+    if (!formExtras) return;
+    const mobile = window.matchMedia("(max-width: 620px)").matches;
+    if (mobile === mobileFormState) return;
+    formExtras.open = !mobile;
+    mobileFormState = mobile;
   };
-
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => activateService(tab));
-    tab.addEventListener("keydown", (event) => {
-      if (!["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
-      event.preventDefault();
-      const visibleTabs = tabs.filter((candidate) => candidate.offsetParent !== null);
-      const index = visibleTabs.indexOf(tab);
-      let nextIndex = index;
-      if (event.key === "ArrowDown") nextIndex = (index + 1) % visibleTabs.length;
-      if (event.key === "ArrowUp") nextIndex = (index - 1 + visibleTabs.length) % visibleTabs.length;
-      if (event.key === "Home") nextIndex = 0;
-      if (event.key === "End") nextIndex = visibleTabs.length - 1;
-      visibleTabs[nextIndex].focus();
-      activateService(visibleTabs[nextIndex]);
-    });
-  });
-
-  serviceAction?.addEventListener("click", () => {
-    const select = bookingForm?.elements.service;
-    if (select && serviceAction.dataset.servicePrefill) select.value = serviceAction.dataset.servicePrefill;
-  });
+  syncFormExtras();
+  window.addEventListener("resize", syncFormExtras);
 
   const formatPlate = (value) => {
     const raw = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
@@ -176,12 +151,10 @@
     }).join("-");
   };
 
-  const plateInput = bookingForm?.elements.plate;
-  plateInput?.addEventListener("input", () => {
-    plateInput.value = formatPlate(plateInput.value);
-  });
+  const plateInput = bookingForm.elements.plate;
+  plateInput?.addEventListener("input", () => { plateInput.value = formatPlate(plateInput.value); });
 
-  const fields = bookingForm ? $$("input, select, textarea", bookingForm) : [];
+  const fields = $$("input, select, textarea", bookingForm);
   const errorMessages = {
     name: "Vul uw naam in.",
     phone: "Vul een telefoonnummer in waarop Dennis u kan bereiken.",
@@ -203,7 +176,6 @@
       const error = $(`[data-error-for="${field.name}"]`, bookingForm);
       if (error) error.textContent = errorMessages[field.name] || "Controleer dit veld.";
     });
-
     if (!invalidFields.length) return true;
     if (formExtras && invalidFields.some((field) => formExtras.contains(field))) formExtras.open = true;
     if (formMessage) formMessage.textContent = "Controleer de gemarkeerde velden en probeer het opnieuw.";
@@ -211,7 +183,7 @@
     return false;
   };
 
-  bookingForm?.addEventListener("input", (event) => {
+  bookingForm.addEventListener("input", (event) => {
     clearFieldError(event.target);
     if (formMessage) formMessage.textContent = "";
   });
@@ -224,10 +196,7 @@
       : "in overleg";
     const subject = `Werkplaatsaanvraag — ${data.get("service")}`;
     const body = [
-      "Beste Dennis,",
-      "",
-      "Graag vraag ik een werkplaatsafspraak aan.",
-      "",
+      "Beste Dennis,", "", "Graag bespreek ik een werkplaatsafspraak.", "",
       `Naam: ${data.get("name")}`,
       `Telefoon: ${data.get("phone")}`,
       data.get("email") ? `E-mail: ${data.get("email")}` : null,
@@ -236,16 +205,12 @@
       `Voorkeursdatum: ${readableDate}`,
       `Voorkeur dagdeel: ${data.get("dayPart") || "Geen voorkeur"}`,
       data.get("details") ? `Toelichting: ${data.get("details")}` : null,
-      "",
-      "Met vriendelijke groet,",
-      String(data.get("name"))
+      "", "Met vriendelijke groet,", String(data.get("name"))
     ].filter((line) => line !== null).join("\n");
-
-    const mailto = `mailto:info@autolelieveld.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    return { subject, body, mailto };
+    return { subject, body, mailto: `mailto:info@autolelieveld.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` };
   };
 
-  bookingForm?.addEventListener("submit", (event) => {
+  bookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!validateForm()) return;
     const { mailto } = buildRequest();
@@ -256,14 +221,12 @@
   copyRequestButton?.addEventListener("click", async () => {
     if (!validateForm()) return;
     const { subject, body } = buildRequest();
-    const requestText = `${subject}\n\n${body}`;
-
+    const text = `${subject}\n\n${body}`;
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(requestText);
-      } else {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+      else {
         const temporary = document.createElement("textarea");
-        temporary.value = requestText;
+        temporary.value = text;
         temporary.setAttribute("readonly", "");
         temporary.style.position = "fixed";
         temporary.style.opacity = "0";
@@ -272,11 +235,9 @@
         document.execCommand("copy");
         temporary.remove();
       }
-      if (formMessage) formMessage.textContent = "De aanvraagtekst is gekopieerd. Plak hem in uw eigen e-mail en stuur die naar info@autolelieveld.nl.";
+      if (formMessage) formMessage.textContent = "De aanvraagtekst is gekopieerd. Plak hem in uw e-mail en stuur die naar info@autolelieveld.nl.";
     } catch {
       if (formMessage) formMessage.textContent = "Kopiëren lukt niet. Mail naar info@autolelieveld.nl of bel 0174 752 762.";
     }
   });
-
-  $("[data-year]").textContent = String(new Date().getFullYear());
 })();
