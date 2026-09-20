@@ -15,6 +15,7 @@
   const formMessage = $("[data-form-message]");
   const formExtras = $("[data-form-extras]");
   const copyRequestButton = $("[data-copy-request]");
+  const emailRequestButton = $("[data-email-request]");
   const liveBookingLink = $("[data-live-booking]");
 
   const closeMenu = () => {
@@ -207,15 +208,27 @@
       data.get("details") ? `Toelichting: ${data.get("details")}` : null,
       "", "Met vriendelijke groet,", String(data.get("name"))
     ].filter((line) => line !== null).join("\n");
-    return { subject, body, mailto: `mailto:info@autolelieveld.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}` };
+    return {
+      subject,
+      body,
+      mailto: `mailto:info@autolelieveld.nl?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      whatsapp: `https://wa.me/31650840498?text=${encodeURIComponent(body)}`
+    };
   };
 
   bookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!validateForm()) return;
+    const { whatsapp } = buildRequest();
+    if (formMessage) formMessage.textContent = "WhatsApp wordt geopend met uw aanvraag. Controleer het bericht en tik daar op verzenden.";
+    window.location.href = whatsapp;
+  });
+
+  emailRequestButton?.addEventListener("click", () => {
+    if (!validateForm()) return;
     const { mailto } = buildRequest();
     if (formMessage) formMessage.textContent = "Uw e-mailprogramma wordt geopend. Controleer de aanvraag en druk daar op verzenden.";
-    window.setTimeout(() => { window.location.href = mailto; }, 120);
+    window.location.href = mailto;
   });
 
   copyRequestButton?.addEventListener("click", async () => {
@@ -235,7 +248,7 @@
         document.execCommand("copy");
         temporary.remove();
       }
-      if (formMessage) formMessage.textContent = "De aanvraagtekst is gekopieerd. Plak hem in uw e-mail en stuur die naar info@autolelieveld.nl.";
+      if (formMessage) formMessage.textContent = "De aanvraagtekst is gekopieerd. Plak hem in WhatsApp of een e-mail aan info@autolelieveld.nl.";
     } catch {
       if (formMessage) formMessage.textContent = "Kopiëren lukt niet. Mail naar info@autolelieveld.nl of bel 0174 752 762.";
     }
